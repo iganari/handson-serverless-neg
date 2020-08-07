@@ -1,8 +1,8 @@
-# Serverless Network Endpoint Group Sample
+# Hands On Serverless Network Endpoint Group
 
 Network Endpoint Group = NEG
 
-## Document
+## Documents
 
 Serverless network endpoint groups overview
 
@@ -472,4 +472,3 @@ gcloud compute addresses delete ${_common}-example-ip --global
 ## closing
 
 Have Fan :)
-
