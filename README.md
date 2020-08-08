@@ -6,11 +6,15 @@ Network Endpoint Group = NEG
 
 Serverless network endpoint groups overview
 
-+ https://cloud.google.com/load-balancing/docs/negs/serverless-neg-concepts
++ https://cloud.google.com/load-balancing/docs/negs/serverless-neg-concepts?hl=en
 
 Setting up serverless NEGs
 
 + https://cloud.google.com/load-balancing/docs/negs/setting-up-serverless-negs?hl=en
+
+HTTP(S) Load Balancing for serverless apps
+
+![](https://cloud.google.com/load-balancing/images/lb-serverless-simple.svg)
 
 ## Prepare gcloud command
 
