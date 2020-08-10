@@ -35,6 +35,27 @@ export _common='check-serverless-neg'
 gcloud config set project ${_pj_id}
 ```
 
+## Prepare API
+
++ Enable API on Project
+
+```
+gcloud beta services enable cloudbuild.googleapis.com && \
+gcloud beta services enable run.googleapis.com && \
+gcloud beta services enable cloudfunctions.googleapis.com && \
+gcloud beta services enable compute.googleapis.com
+```
+
+
+## Prepare Sample Code
+
++ Clone Repository
+
+```
+git clone https://github.com/iganari/handson-serverless-neg.git
+cd handson-serverless-neg
+```
+
 ## Create Sample Cloud Run
 
 + Official Document
@@ -105,6 +126,12 @@ cd appengine
 
 ```
 cat app.yaml.sample | sed "s/YOUR_SERVICE/${_common}-app/g" > app.yaml
+```
+
++ Setting Region on Current GCP Project.
+
+```
+gcloud beta app create --region asia-northeast1
 ```
 
 + Deploy App Engine.
@@ -272,12 +299,12 @@ gcloud compute backend-services create ${_common}-backend-service-func \
 + Check Backend Services.
 
 ```
-gcloud compute backend-services list
+gcloud compute backend-services list --project ${_pj_id}
 ```
 ```
 ### Ex.
 
-# gcloud compute backend-services list
+# gcloud compute backend-services list --project ${_pj_id}
 NAME                                      BACKENDS  PROTOCOL
 check-serverless-neg-backend-service-app            HTTP
 check-serverless-neg-backend-service-func           HTTP
@@ -316,12 +343,12 @@ gcloud beta compute backend-services add-backend ${_common}-backend-service-func
 + Check Backend Service.
 
 ```
-gcloud compute backend-services list
+gcloud compute backend-services list --project ${_pj_id}
 ```
 ```
 ### Ex.
 
-# gcloud compute backend-services list
+# gcloud compute backend-services list --project ${_pj_id}
 NAME                                       BACKENDS                                                                        PROTOCOL
 check-serverless-neg-backend-service-app   asia-northeast1/networkEndpointGroups/check-serverless-neg-serverless-neg-app   HTTP
 check-serverless-neg-backend-service-func  asia-northeast1/networkEndpointGroups/check-serverless-neg-serverless-neg-func  HTTP
@@ -350,12 +377,12 @@ gcloud compute url-maps add-path-matcher ${_common}-url-map \
 + Check URL map
 
 ```
-gcloud compute url-maps list
+gcloud compute url-maps list --project ${_pj_id}
 ```
 ```
 ### Ex.
 
-# gcloud compute url-maps list
+# gcloud compute url-maps list --project ${_pj_id}
 NAME                          DEFAULT_SERVICE
 check-serverless-neg-url-map  backendServices/check-serverless-neg-backend-service-run
 ```
@@ -366,6 +393,8 @@ check-serverless-neg-url-map  backendServices/check-serverless-neg-backend-servi
 
 ```
 export _my_domain=$(echo ${_common}.hejda.org)
+
+echo ${_my_domain}
 ```
 ```
 gcloud compute ssl-certificates create ${_common}-www-ssl-cert \
@@ -375,7 +404,7 @@ gcloud compute ssl-certificates create ${_common}-www-ssl-cert \
 + Check certificate resource.
 
 ```
-gcloud compute ssl-certificates list
+gcloud compute ssl-certificates list --project ${_pj_id}
 ```
 ```
 ### Ex.
@@ -386,7 +415,7 @@ check-serverless-neg-www-ssl-cert  MANAGED  2020-07-26T00:35:54.246-07:00       
     check-serverless-neg.hejda.org: PROVISIONING
 ```
 
-### 
+### Create Target Proxy
 
 + Create a target HTTPS proxy to route requests to your URL map
 
@@ -396,7 +425,21 @@ gcloud compute target-https-proxies create ${_common}-https-proxy \
     --url-map=${_common}-url-map
 ```
 
-## Create Forwarding Rule of Load Balancer
++ Check Target HTTP(S) Proxy
+
+```
+gcloud compute target-https-proxies list --project ${_pj_id}
+```
+```
+### Ex.
+
+# gcloud compute target-https-proxies list --project ${_pj_id}
+NAME                              SSL_CERTIFICATES                   URL_MAP
+check-serverless-neg-https-proxy  check-serverless-neg-www-ssl-cert  check-serverless-neg-url-map
+```
+
+
+### Create Forwarding Rule of Load Balancer
 
 + Create a global forwarding rule to route incoming requests to the proxy.
 
@@ -411,12 +454,12 @@ gcloud compute forwarding-rules create ${_common}-https-content-rule \
 + Check global forwarding rule.
 
 ```
-gcloud compute forwarding-rules list
+gcloud compute forwarding-rules list --project ${_pj_id}
 ```
 ```
 ### Ex.
 
-# gcloud compute forwarding-rules list
+# gcloud compute forwarding-rules list --project ${_pj_id}
 NAME                                     REGION  IP_ADDRESS      IP_PROTOCOL  TARGET
 check-serverless-neg-https-content-rule          34.107.216.140  TCP          check-serverless-neg-https-proxy
 ```
@@ -456,19 +499,27 @@ Check the resources with a Web browser.
 + Delete the Resources created so far using the gloud command.
 
 ```
-gcloud compute forwarding-rules delete ${_common}-https-content-rule --global
+gcloud beta compute forwarding-rules delete ${_common}-https-content-rule --global
 
-gcloud compute target-https-proxies delete ${_common}-https-proxy
+gcloud beta compute target-https-proxies delete ${_common}-https-proxy
 
-gcloud compute ssl-certificates delete ${_common}-www-ssl-cert 
+gcloud beta compute ssl-certificates delete ${_common}-www-ssl-cert 
 
-gcloud compute url-maps remove-path-matcher ${_common}-url-map --path-matcher-name=${_common}-path-matcher
+gcloud beta compute url-maps remove-path-matcher ${_common}-url-map --path-matcher-name=${_common}-path-matcher
 
-gcloud compute url-maps delete ${_common}-url-map 
+gcloud beta compute url-maps delete ${_common}-url-map 
 
-gcloud compute backend-services delete ${_common}-backend-service --global
+gcloud beta compute backend-services delete ${_common}-backend-service-app  --global
+gcloud beta compute backend-services delete ${_common}-backend-service-func --global
+gcloud beta compute backend-services delete ${_common}-backend-service-run  --global
 
-gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg --region=asia-northeast1 
+gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg-app  --region=asia-northeast1 
+gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg-func --region=asia-northeast1 
+gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg-run  --region=asia-northeast1 
+
+gcloud beta app services delete ${_common}-app
+gcloud beta functions delete func --region asia-northeast1
+gcloud beta run services delete ${_common}-run --platform managed --region asia-northeast1
 
 gcloud compute addresses delete ${_common}-example-ip --global
 ```
