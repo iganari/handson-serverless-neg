@@ -281,12 +281,12 @@ gcloud compute backend-services create ${_common}-backend-service-func \
 + Check Backend Services.
 
 ```
-gcloud compute backend-services list
+gcloud compute backend-services list --project ${_pj_id}
 ```
 ```
 ### Ex.
 
-# gcloud compute backend-services list
+# gcloud compute backend-services list --project ${_pj_id}
 NAME                                      BACKENDS  PROTOCOL
 check-serverless-neg-backend-service-app            HTTP
 check-serverless-neg-backend-service-func           HTTP
@@ -325,12 +325,12 @@ gcloud beta compute backend-services add-backend ${_common}-backend-service-func
 + Check Backend Service.
 
 ```
-gcloud compute backend-services list
+gcloud compute backend-services list --project ${_pj_id}
 ```
 ```
 ### Ex.
 
-# gcloud compute backend-services list
+# gcloud compute backend-services list --project ${_pj_id}
 NAME                                       BACKENDS                                                                        PROTOCOL
 check-serverless-neg-backend-service-app   asia-northeast1/networkEndpointGroups/check-serverless-neg-serverless-neg-app   HTTP
 check-serverless-neg-backend-service-func  asia-northeast1/networkEndpointGroups/check-serverless-neg-serverless-neg-func  HTTP
@@ -359,7 +359,7 @@ gcloud compute url-maps add-path-matcher ${_common}-url-map \
 + Check URL map
 
 ```
-gcloud compute url-maps list
+gcloud compute url-maps list --project ${_pj_id}
 ```
 ```
 ### Ex.
@@ -384,7 +384,7 @@ gcloud compute ssl-certificates create ${_common}-www-ssl-cert \
 + Check certificate resource.
 
 ```
-gcloud compute ssl-certificates list
+gcloud compute ssl-certificates list --project ${_pj_id}
 ```
 ```
 ### Ex.
@@ -420,7 +420,7 @@ gcloud compute forwarding-rules create ${_common}-https-content-rule \
 + Check global forwarding rule.
 
 ```
-gcloud compute forwarding-rules list
+gcloud compute forwarding-rules list --project ${_pj_id}
 ```
 ```
 ### Ex.
