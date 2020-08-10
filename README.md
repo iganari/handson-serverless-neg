@@ -364,7 +364,7 @@ gcloud compute url-maps list --project ${_pj_id}
 ```
 ### Ex.
 
-# gcloud compute url-maps list
+# gcloud compute url-maps list --project ${_pj_id}
 NAME                          DEFAULT_SERVICE
 check-serverless-neg-url-map  backendServices/check-serverless-neg-backend-service-run
 ```
@@ -395,7 +395,7 @@ check-serverless-neg-www-ssl-cert  MANAGED  2020-07-26T00:35:54.246-07:00       
     check-serverless-neg.hejda.org: PROVISIONING
 ```
 
-### 
+### Create Target Proxy
 
 + Create a target HTTPS proxy to route requests to your URL map
 
@@ -405,7 +405,21 @@ gcloud compute target-https-proxies create ${_common}-https-proxy \
     --url-map=${_common}-url-map
 ```
 
-## Create Forwarding Rule of Load Balancer
++ Check Target HTTP(S) Proxy
+
+```
+gcloud compute target-https-proxies list --project ${_pj_id}
+```
+```
+### Ex.
+
+# gcloud compute target-https-proxies list --project ${_pj_id}
+NAME                              SSL_CERTIFICATES                   URL_MAP
+check-serverless-neg-https-proxy  check-serverless-neg-www-ssl-cert  check-serverless-neg-url-map
+```
+
+
+### Create Forwarding Rule of Load Balancer
 
 + Create a global forwarding rule to route incoming requests to the proxy.
 
@@ -425,7 +439,7 @@ gcloud compute forwarding-rules list --project ${_pj_id}
 ```
 ### Ex.
 
-# gcloud compute forwarding-rules list
+# gcloud compute forwarding-rules list --project ${_pj_id}
 NAME                                     REGION  IP_ADDRESS      IP_PROTOCOL  TARGET
 check-serverless-neg-https-content-rule          34.107.216.140  TCP          check-serverless-neg-https-proxy
 ```
