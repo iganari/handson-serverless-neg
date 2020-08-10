@@ -35,6 +35,18 @@ export _common='check-serverless-neg'
 gcloud config set project ${_pj_id}
 ```
 
+## Prepare API
+
++ Enable API on Project
+
+```
+gcloud beta services enable cloudbuild.googleapis.com && \
+gcloud beta services enable run.googleapis.com && \
+gcloud beta services enable cloudfunctions.googleapis.com && \
+gcloud beta services enable compute.googleapis.com
+```
+
+
 ## Prepare Sample Code
 
 + Clone Repository
@@ -114,6 +126,12 @@ cd appengine
 
 ```
 cat app.yaml.sample | sed "s/YOUR_SERVICE/${_common}-app/g" > app.yaml
+```
+
++ Setting Region on Current GCP Project.
+
+```
+gcloud beta app create --region asia-northeast1
 ```
 
 + Deploy App Engine.
@@ -375,6 +393,8 @@ check-serverless-neg-url-map  backendServices/check-serverless-neg-backend-servi
 
 ```
 export _my_domain=$(echo ${_common}.hejda.org)
+
+echo ${_my_domain}
 ```
 ```
 gcloud compute ssl-certificates create ${_common}-www-ssl-cert \
