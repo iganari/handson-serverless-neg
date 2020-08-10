@@ -35,6 +35,15 @@ export _common='check-serverless-neg'
 gcloud config set project ${_pj_id}
 ```
 
+## Prepare Sample Code
+
++ Clone Repository
+
+```
+git clone https://github.com/iganari/handson-serverless-neg.git
+cd handson-serverless-neg
+```
+
 ## Create Sample Cloud Run
 
 + Official Document
