@@ -6,7 +6,7 @@ set -xu
 
 export _common='check-serverless-neg'
 
-array-lb = (
+array-lb=(
     forwarding-rules delete ${_common}-https-content-rule --global
     target-https-proxies delete ${_common}-https-proxy
     ssl-certificates delete ${_common}-www-ssl-cert
