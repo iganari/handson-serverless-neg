@@ -70,13 +70,13 @@ cd cloudrun
 + Build your container image using Cloud Build
 
 ```
-gcloud builds submit --tag gcr.io/${_pj_id}/${_common}-run
+gcloud beta builds submit --tag gcr.io/${_pj_id}/${_common}-run
 ```
 
 + Deploy to Cloud Run
 
 ```
-gcloud run deploy ${_common}-run \
+gcloud beta run deploy ${_common}-run \
     --image gcr.io/${_pj_id}/${_common}-run \
     --platform managed \
     --region asia-northeast1 \
@@ -85,7 +85,7 @@ gcloud run deploy ${_common}-run \
 ```
 ### Ex.
 
-# gcloud run deploy ${_common}-run \
+# gcloud beta run deploy ${_common}-run \
 >     --image gcr.io/${_pj_id}/${_common}-run \
 >     --platform managed \
 >     --region asia-northeast1 \
@@ -179,7 +179,7 @@ cd functions
 + Deploy Cloud Functions.
 
 ```
-gcloud functions deploy func \
+gcloud beta functions deploy func \
   --runtime python38 \
   --trigger-http \
   --region asia-northeast1 \
@@ -199,7 +199,7 @@ cd -
 + Reserving an External IP Address.
 
 ```
-gcloud compute addresses create ${_common}-example-ip \
+gcloud beta compute addresses create ${_common}-example-ip \
     --ip-version=IPV4 \
     --global
 ```
@@ -207,14 +207,14 @@ gcloud compute addresses create ${_common}-example-ip \
 + Check External IP Address.
 
 ```
-gcloud compute addresses describe ${_common}-example-ip \
+gcloud beta compute addresses describe ${_common}-example-ip \
     --format="get(address)" \
     --global
 ```
 ```
 ### Ex.
 
-# gcloud compute addresses describe ${_common}-example-ip \
+# gcloud beta compute addresses describe ${_common}-example-ip \
 >     --format="get(address)" \
 >     --global
 34.107.216.140
@@ -278,33 +278,33 @@ check-serverless-neg-serverless-neg-run   asia-northeast1  SERVERLESS     0
 + Create Cloud Run's backend service.
 
 ```
-gcloud compute backend-services create ${_common}-backend-service-run \
+gcloud beta compute backend-services create ${_common}-backend-service-run \
     --global
 ```
 
 + Create App Engine's backend service.
 
 ```
-gcloud compute backend-services create ${_common}-backend-service-app \
+gcloud beta compute backend-services create ${_common}-backend-service-app \
     --global
 ```
 
 + Create Cloud Functions's  backend service.
 
 ```
-gcloud compute backend-services create ${_common}-backend-service-func \
+gcloud beta compute backend-services create ${_common}-backend-service-func \
     --global
 ```
 
 + Check Backend Services.
 
 ```
-gcloud compute backend-services list --project ${_pj_id}
+gcloud beta compute backend-services list --project ${_pj_id}
 ```
 ```
 ### Ex.
 
-# gcloud compute backend-services list --project ${_pj_id}
+# gcloud beta compute backend-services list --project ${_pj_id}
 NAME                                      BACKENDS  PROTOCOL
 check-serverless-neg-backend-service-app            HTTP
 check-serverless-neg-backend-service-func           HTTP
@@ -343,12 +343,12 @@ gcloud beta compute backend-services add-backend ${_common}-backend-service-func
 + Check Backend Service.
 
 ```
-gcloud compute backend-services list --project ${_pj_id}
+gcloud beta compute backend-services list --project ${_pj_id}
 ```
 ```
 ### Ex.
 
-# gcloud compute backend-services list --project ${_pj_id}
+# gcloud beta compute backend-services list --project ${_pj_id}
 NAME                                       BACKENDS                                                                        PROTOCOL
 check-serverless-neg-backend-service-app   asia-northeast1/networkEndpointGroups/check-serverless-neg-serverless-neg-app   HTTP
 check-serverless-neg-backend-service-func  asia-northeast1/networkEndpointGroups/check-serverless-neg-serverless-neg-func  HTTP
@@ -361,14 +361,14 @@ check-serverless-neg-backend-service-run   asia-northeast1/networkEndpointGroups
   + The default settings should map to Cloud Run.
 
 ```
-gcloud compute url-maps create ${_common}-url-map \
+gcloud beta compute url-maps create ${_common}-url-map \
     --default-service ${_common}-backend-service-run
 ```
 
 + Set other than the default setting of URL map.
 
 ```
-gcloud compute url-maps add-path-matcher ${_common}-url-map \
+gcloud beta compute url-maps add-path-matcher ${_common}-url-map \
     --path-matcher-name=${_common}-path-matcher \
     --path-rules "/app=check-serverless-neg-backend-service-app,/func=check-serverless-neg-backend-service-func" \
     --default-service=check-serverless-neg-backend-service-run
@@ -377,12 +377,12 @@ gcloud compute url-maps add-path-matcher ${_common}-url-map \
 + Check URL map
 
 ```
-gcloud compute url-maps list --project ${_pj_id}
+gcloud beta compute url-maps list --project ${_pj_id}
 ```
 ```
 ### Ex.
 
-# gcloud compute url-maps list --project ${_pj_id}
+# gcloud beta compute url-maps list --project ${_pj_id}
 NAME                          DEFAULT_SERVICE
 check-serverless-neg-url-map  backendServices/check-serverless-neg-backend-service-run
 ```
@@ -397,19 +397,19 @@ export _my_domain=$(echo ${_common}.hejda.org)
 echo ${_my_domain}
 ```
 ```
-gcloud compute ssl-certificates create ${_common}-www-ssl-cert \
+gcloud beta compute ssl-certificates create ${_common}-www-ssl-cert \
     --domains ${_my_domain}
 ```
 
 + Check certificate resource.
 
 ```
-gcloud compute ssl-certificates list --project ${_pj_id}
+gcloud beta compute ssl-certificates list --project ${_pj_id}
 ```
 ```
 ### Ex.
 
-# gcloud compute ssl-certificates list
+# gcloud beta compute ssl-certificates list
 NAME                               TYPE     CREATION_TIMESTAMP             EXPIRE_TIME  MANAGED_STATUS
 check-serverless-neg-www-ssl-cert  MANAGED  2020-07-26T00:35:54.246-07:00               PROVISIONING
     check-serverless-neg.hejda.org: PROVISIONING
@@ -420,7 +420,7 @@ check-serverless-neg-www-ssl-cert  MANAGED  2020-07-26T00:35:54.246-07:00       
 + Create a target HTTPS proxy to route requests to your URL map
 
 ```
-gcloud compute target-https-proxies create ${_common}-https-proxy \
+gcloud beta compute target-https-proxies create ${_common}-https-proxy \
     --ssl-certificates=${_common}-www-ssl-cert \
     --url-map=${_common}-url-map
 ```
@@ -428,12 +428,12 @@ gcloud compute target-https-proxies create ${_common}-https-proxy \
 + Check Target HTTP(S) Proxy
 
 ```
-gcloud compute target-https-proxies list --project ${_pj_id}
+gcloud beta compute target-https-proxies list --project ${_pj_id}
 ```
 ```
 ### Ex.
 
-# gcloud compute target-https-proxies list --project ${_pj_id}
+# gcloud beta compute target-https-proxies list --project ${_pj_id}
 NAME                              SSL_CERTIFICATES                   URL_MAP
 check-serverless-neg-https-proxy  check-serverless-neg-www-ssl-cert  check-serverless-neg-url-map
 ```
@@ -444,7 +444,7 @@ check-serverless-neg-https-proxy  check-serverless-neg-www-ssl-cert  check-serve
 + Create a global forwarding rule to route incoming requests to the proxy.
 
 ```
-gcloud compute forwarding-rules create ${_common}-https-content-rule \
+gcloud beta compute forwarding-rules create ${_common}-https-content-rule \
     --address=${_common}-example-ip \
     --target-https-proxy=${_common}-https-proxy \
     --global \
@@ -454,12 +454,12 @@ gcloud compute forwarding-rules create ${_common}-https-content-rule \
 + Check global forwarding rule.
 
 ```
-gcloud compute forwarding-rules list --project ${_pj_id}
+gcloud beta compute forwarding-rules list --project ${_pj_id}
 ```
 ```
 ### Ex.
 
-# gcloud compute forwarding-rules list --project ${_pj_id}
+# gcloud beta compute forwarding-rules list --project ${_pj_id}
 NAME                                     REGION  IP_ADDRESS      IP_PROTOCOL  TARGET
 check-serverless-neg-https-content-rule          34.107.216.140  TCP          check-serverless-neg-https-proxy
 ```
