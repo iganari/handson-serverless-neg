@@ -24,15 +24,14 @@ HTTP(S) Load Balancing for serverless apps
 gcloud auth login -q
 ```
 
-+ Setting GCP Project on Console.
++ Setting Environment
 
 ```
-### New Setting
+### New Env
+
 export _pj_id='Your GCP Project ID'
 export _common='check-serverless-neg'
-```
-```
-gcloud config set project ${_pj_id}
+export _region='asia-northeast1'
 ```
 
 ## Prepare API
@@ -78,7 +77,7 @@ gcloud beta builds submit --tag gcr.io/${_pj_id}/${_common}-run
 gcloud beta run deploy ${_common}-run \
     --image gcr.io/${_pj_id}/${_common}-run \
     --platform managed \
-    --region asia-northeast1 \
+    --region ${_region} \
     --allow-unauthenticated
 ```
 ```
@@ -87,7 +86,7 @@ gcloud beta run deploy ${_common}-run \
 # gcloud beta run deploy ${_common}-run \
 >     --image gcr.io/${_pj_id}/${_common}-run \
 >     --platform managed \
->     --region asia-northeast1 \
+>     --region ${_region} \
 >     --allow-unauthenticated
 Deploying container to Cloud Run service [check-serverless-neg-run] in project [~~~~~~~~~~] region [asia-northeast1]
 ✓ Deploying new service... Done.
@@ -181,7 +180,7 @@ cd functions
 gcloud beta functions deploy func \
   --runtime python38 \
   --trigger-http \
-  --region asia-northeast1 \
+  --region ${_region} \
   --allow-unauthenticated
 ```
 
@@ -233,7 +232,7 @@ gcloud beta compute addresses describe ${_common}-example-ip \
 
 ```
 gcloud beta compute network-endpoint-groups create ${_common}-serverless-neg-run \
-    --region=asia-northeast1 \
+    --region=${_region} \
     --network-endpoint-type=SERVERLESS  \
     --cloud-run-service=${_common}-run
 ```
@@ -242,7 +241,7 @@ gcloud beta compute network-endpoint-groups create ${_common}-serverless-neg-run
 
 ```
 gcloud beta compute network-endpoint-groups create ${_common}-serverless-neg-app \
-    --region=asia-northeast1 \
+    --region=${_region} \
     --network-endpoint-type=SERVERLESS  \
     --app-engine-service=${_common}-app
 ```
@@ -251,7 +250,7 @@ gcloud beta compute network-endpoint-groups create ${_common}-serverless-neg-app
 
 ```
 gcloud beta compute network-endpoint-groups create ${_common}-serverless-neg-func \
-    --region=asia-northeast1 \
+    --region=${_region} \
     --network-endpoint-type=SERVERLESS  \
     --cloud-function-name=func
 ```
@@ -327,7 +326,7 @@ gcloud beta compute backend-services add-backend ${_common}-backend-service-run 
 gcloud beta compute backend-services add-backend ${_common}-backend-service-app \
     --global \
     --network-endpoint-group=${_common}-serverless-neg-app \
-    --network-endpoint-group-region=asia-northeast1
+    --network-endpoint-group-region=${_region}
 ```
 
 + Add Cloud Functions's Serverless NEG as a backend to Cloud Functions's Backend Service
@@ -336,7 +335,7 @@ gcloud beta compute backend-services add-backend ${_common}-backend-service-app 
 gcloud beta compute backend-services add-backend ${_common}-backend-service-func \
     --global \
     --network-endpoint-group=${_common}-serverless-neg-func \
-    --network-endpoint-group-region=asia-northeast1
+    --network-endpoint-group-region=${_region}
 ```
 
 + Check Backend Service.
@@ -512,13 +511,13 @@ gcloud beta compute backend-services delete ${_common}-backend-service-app  --gl
 gcloud beta compute backend-services delete ${_common}-backend-service-func --global
 gcloud beta compute backend-services delete ${_common}-backend-service-run  --global
 
-gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg-app  --region=asia-northeast1 
-gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg-func --region=asia-northeast1 
-gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg-run  --region=asia-northeast1 
+gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg-app  --region=${_region} 
+gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg-func --region=${_region} 
+gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg-run  --region=${_region}
 
 gcloud beta app services delete ${_common}-app
-gcloud beta functions delete func --region asia-northeast1
-gcloud beta run services delete ${_common}-run --platform managed --region asia-northeast1
+gcloud beta functions delete func --region ${_region}
+gcloud beta run services delete ${_common}-run --platform managed --region ${_region}
 
 gcloud compute addresses delete ${_common}-example-ip --global
 ```
