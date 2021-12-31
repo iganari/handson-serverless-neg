@@ -46,7 +46,6 @@ gcloud beta services enable cloudfunctions.googleapis.com && \
 gcloud beta services enable compute.googleapis.com
 ```
 
-
 ## Prepare Sample Code
 
 + Clone Repository
@@ -472,27 +471,27 @@ Check the resources with a Web browser.
 
 + URL map on GCP console.
 
-![](./neg-serverless-02.png)
+![](./_img/neg-serverless-02.png)
 
 + "/" maps to Cloud Run.
 
-![](./neg-serverless-03.png)
+![](./_img/neg-serverless-03.png)
 
 + "/run" maps to Cloud Run.
 
-![](./neg-serverless-04.png)
+![](./_img/neg-serverless-04.png)
 
 + "/app" maps to App Engine.
 
-![](./neg-serverless-05.png)
+![](./_img/neg-serverless-05.png)
 
 + "/func" maps to Cloud Functions.
 
-![](./neg-serverless-06.png)
+![](./_img/neg-serverless-06.png)
 
 + If none of the above rules apply, it is mapped to Cloud Run.
 
-![](./neg-serverless-07.png)
+![](./_img/neg-serverless-07.png)
 
 ## Delete Resource
 
