@@ -149,6 +149,9 @@ gcloud beta app deploy --project ${_gcp_pj_id}
 sed -i -e 's/service:/# service:/g' app.yaml
 gcloud beta app deploy --project ${_gcp_pj_id}
 ```
+
++ Re-Deploy App Engine.
+
 ```
 sed -i -e 's/# service:/service:/g' app.yaml
 gcloud beta app deploy --project ${_gcp_pj_id}
@@ -334,13 +337,6 @@ check-serverless-neg-backend-service-app            HTTP
 check-serverless-neg-backend-service-func           HTTP
 check-serverless-neg-backend-service-run            HTTP
 ```
-
-
-
-########### ここまで ##############
-
-
-
 
 ### Add the Serverless NEG as a backend to the Backend Service
 
