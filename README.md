@@ -534,6 +534,10 @@ Check the resources with a Web browser.
 
 ![](./_img/neg-serverless-07.png)
 
++ OverView
+
+![](./_img/neg-serverless-08.png)
+
 ## Delete Resource
 
 Delete the Resources created so far using the gloud command.
