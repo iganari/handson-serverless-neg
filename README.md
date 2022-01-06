@@ -510,31 +510,31 @@ check-serverless-neg-https-content-rule          34.120.199.24  TCP          che
 
 Check the resources with a Web browser.
 
-+ URL map on GCP console.
+### URL map on GCP console.
 
 ![](./_img/neg-serverless-02.png)
 
-+ "/" maps to Cloud Run.
+### "/" maps to Cloud Run.
 
 ![](./_img/neg-serverless-03.png)
 
-+ "/run" maps to Cloud Run.
+### "/run" maps to Cloud Run.
 
 ![](./_img/neg-serverless-04.png)
 
-+ "/app" maps to App Engine.
+### "/app" maps to App Engine.
 
 ![](./_img/neg-serverless-05.png)
 
-+ "/func" maps to Cloud Functions.
+### "/func" maps to Cloud Functions.
 
 ![](./_img/neg-serverless-06.png)
 
-+ If none of the above rules apply, it is mapped to Cloud Run.
+### If none of the above rules apply, it is mapped to Cloud Run.
 
 ![](./_img/neg-serverless-07.png)
 
-+ OverView
+### OverView
 
 ![](./_img/neg-serverless-08.png)
 
