@@ -149,6 +149,9 @@ gcloud beta app deploy --project ${_gcp_pj_id}
 sed -i -e 's/service:/# service:/g' app.yaml
 gcloud beta app deploy --project ${_gcp_pj_id}
 ```
+
++ Re-Deploy App Engine.
+
 ```
 sed -i -e 's/# service:/service:/g' app.yaml
 gcloud beta app deploy --project ${_gcp_pj_id}
@@ -335,13 +338,6 @@ check-serverless-neg-backend-service-func           HTTP
 check-serverless-neg-backend-service-run            HTTP
 ```
 
-
-
-########### ここまで ##############
-
-
-
-
 ### Add the Serverless NEG as a backend to the Backend Service
 
 + Add Cloud Run's Serverless NEG as a backend to Cloud Run's Backend Service
@@ -514,29 +510,33 @@ check-serverless-neg-https-content-rule          34.120.199.24  TCP          che
 
 Check the resources with a Web browser.
 
-+ URL map on GCP console.
+### URL map on GCP console.
 
 ![](./_img/neg-serverless-02.png)
 
-+ "/" maps to Cloud Run.
+### "/" maps to Cloud Run.
 
 ![](./_img/neg-serverless-03.png)
 
-+ "/run" maps to Cloud Run.
+### "/run" maps to Cloud Run.
 
 ![](./_img/neg-serverless-04.png)
 
-+ "/app" maps to App Engine.
+### "/app" maps to App Engine.
 
 ![](./_img/neg-serverless-05.png)
 
-+ "/func" maps to Cloud Functions.
+### "/func" maps to Cloud Functions.
 
 ![](./_img/neg-serverless-06.png)
 
-+ If none of the above rules apply, it is mapped to Cloud Run.
+### If none of the above rules apply, it is mapped to Cloud Run.
 
 ![](./_img/neg-serverless-07.png)
+
+### OverView
+
+![](./_img/neg-serverless-08.png)
 
 ## Delete Resource
 
@@ -554,27 +554,50 @@ gcloud beta compute forwarding-rules delete ${_common}-https-content-rule --glob
 gcloud beta compute target-https-proxies delete ${_common}-https-proxy --project ${_gcp_pj_id}
 ```
 
++ Delete Google-managed SSL certificate resource
 
 ```
-gcloud beta compute ssl-certificates delete ${_common}-www-ssl-cert 
+gcloud beta compute ssl-certificates delete ${_common}-www-ssl-cert --project ${_gcp_pj_id}
+```
 
-gcloud beta compute url-maps remove-path-matcher ${_common}-url-map --path-matcher-name=${_common}-path-matcher
++ Delete URL map
 
-gcloud beta compute url-maps delete ${_common}-url-map 
+```
+gcloud beta compute url-maps remove-path-matcher ${_common}-url-map --path-matcher-name=${_common}-path-matcher --project ${_gcp_pj_id}
 
-gcloud beta compute backend-services delete ${_common}-backend-service-app  --global
-gcloud beta compute backend-services delete ${_common}-backend-service-func --global
-gcloud beta compute backend-services delete ${_common}-backend-service-run  --global
+gcloud beta compute url-maps delete ${_common}-url-map --project ${_gcp_pj_id}
+```
 
-gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg-app  --region=${_region} 
-gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg-func --region=${_region} 
-gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg-run  --region=${_region}
++ Delete Backend Service
 
-gcloud beta app services delete ${_common}-app
-gcloud beta functions delete func --region ${_region}
-gcloud beta run services delete ${_common}-run --platform managed --region ${_region}
+```
+gcloud beta compute backend-services delete ${_common}-backend-service-app  --global --project ${_gcp_pj_id}
+gcloud beta compute backend-services delete ${_common}-backend-service-func --global --project ${_gcp_pj_id}
+gcloud beta compute backend-services delete ${_common}-backend-service-run  --global --project ${_gcp_pj_id}
+```
 
-gcloud compute addresses delete ${_common}-example-ip --global
++ Delete Serverless NEG
+
+```
+gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg-app  --region=${_region} --project ${_gcp_pj_id}
+gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg-func --region=${_region} --project ${_gcp_pj_id}
+gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg-run  --region=${_region} --project ${_gcp_pj_id}
+```
+
++ Delete Serverless Service
+
+```
+gcloud beta app services delete ${_common}-app --project ${_gcp_pj_id}
+gcloud beta functions delete func --region ${_region} --project ${_gcp_pj_id}
+gcloud beta run services delete ${_common}-run --platform managed --region ${_region} --project ${_gcp_pj_id}
+
+gcloud beta container images delete gcr.io/${_gcp_pj_id}/${_common}-run --project ${_gcp_pj_id}
+```
+
++ Delete External IP Address
+
+```
+gcloud compute addresses delete ${_common}-example-ip --global --project ${_gcp_pj_id}
 ```
 
 ## closing
