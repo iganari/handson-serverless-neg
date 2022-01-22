@@ -1,5 +1,4 @@
-
-```````# 
+# WIP
 
 ## 概要
 
@@ -8,7 +7,7 @@ run および app enngine は複数のバージョンを管理することが出
 よくある使いみちはバージョン管理など v1 , v2 みたいな
 
 backend には Run および App Engine 
-```````
+
 
 ```
 NAME
@@ -213,17 +212,6 @@ gcloud beta compute addresses describe ${_common}-example-ip \
 34.120.199.24
 ```
 
-
-
-
-
-
-
-
-
-
-
-
 ## Prepare Sub Domain
 
 + Set the reserved static IP address as an A record for your own subdomain.
@@ -409,6 +397,118 @@ gcloud beta compute url-maps add-path-matcher ${_common}-url-map \
   --project ${_gcp_pj_id}
 ```
 
+gcloud beta compute url-maps add-path-matcher --help
+
+おそらくここを修正する
+gcloud beta compute url-maps remove-path-matcher ${_common}-url-map --path-matcher-name=${_common}-path-matcher --project ${_gcp_pj_id} -q
+
++ Re Setting url-maps
+  + https://cloud.google.com/load-balancing/docs/https/traffic-management#rewrites
+  + https://cloud.google.com/load-balancing/docs/https/setting-up-url-rewrite#modifying_the_url_map
+
+
+```
+gcloud beta compute url-maps describe ${_common}-url-map --project ${_gcp_pj_id}
+```
+```
+# gcloud beta compute url-maps describe ${_common}-url-map --project ${_gcp_pj_id}
+creationTimestamp: '2022-01-21T02:52:25.351-08:00'
+defaultService: https://www.googleapis.com/compute/beta/projects/your_gcp_pj_id/global/backendServices/ho-serverlessneg-ver-backend-service-run-1
+fingerprint: 0QQUPP7g57o=
+hostRules:
+- hosts:
+  - '*'
+  pathMatcher: ho-serverlessneg-ver-path-matcher
+id: '2462096409437351558'
+kind: compute#urlMap
+name: ho-serverlessneg-ver-url-map
+pathMatchers:
+- defaultService: https://www.googleapis.com/compute/beta/projects/your_gcp_pj_id/global/backendServices/ho-serverlessneg-ver-backend-service-run-1
+  name: ho-serverlessneg-ver-path-matcher
+  pathRules:
+  - paths:
+    - /app-1
+    service: https://www.googleapis.com/compute/beta/projects/your_gcp_pj_id/global/backendServices/ho-serverlessneg-ver-backend-service-app-1
+  - paths:
+    - /app-2
+    service: https://www.googleapis.com/compute/beta/projects/your_gcp_pj_id/global/backendServices/ho-serverlessneg-ver-backend-service-app-2
+  - paths:
+    - /run-1
+    service: https://www.googleapis.com/compute/beta/projects/your_gcp_pj_id/global/backendServices/ho-serverlessneg-ver-backend-service-run-1
+  - paths:
+    - /run-2
+    service: https://www.googleapis.com/compute/beta/projects/your_gcp_pj_id/global/backendServices/ho-serverlessneg-ver-backend-service-run-2
+selfLink: https://www.googleapis.com/compute/beta/projects/your_gcp_pj_id/global/urlMaps/ho-serverlessneg-ver-url-map
+```
+
+```
+gcloud beta compute url-maps describe ${_common}-url-map --project ${_gcp_pj_id} > ${_gcp_pj_id}.yaml
+```
+```
+vim ${_gcp_pj_id}.yaml
+```
+
++ Modify
+  + add `pathMatchers.pathRules.routeAction`
+  + remove `id`
+
+
+```
+creationTimestamp: '2022-01-21T02:52:25.351-08:00'
+defaultService: https://www.googleapis.com/compute/beta/projects/your_gcp_pj_id/global/backendServices/ho-serverlessneg-ver-backend-service-run-1
+fingerprint: 0QQUPP7g57o=
+hostRules:
+- hosts:
+  - '*'
+  pathMatcher: ho-serverlessneg-ver-path-matcher
+kind: compute#urlMap
+name: ho-serverlessneg-ver-url-map
+pathMatchers:
+- defaultService: https://www.googleapis.com/compute/beta/projects/your_gcp_pj_id/global/backendServices/ho-serverlessneg-ver-backend-service-run-1
+  name: ho-serverlessneg-ver-path-matcher
+  pathRules:
+  - paths:
+    - /app-1
+    routeAction:
+      urlRewrite:
+        pathPrefixRewrite: /
+    service: https://www.googleapis.com/compute/beta/projects/your_gcp_pj_id/global/backendServices/ho-serverlessneg-ver-backend-service-app-1
+  - paths:
+    - /app-2
+    routeAction:
+      urlRewrite:
+        pathPrefixRewrite: /
+    service: https://www.googleapis.com/compute/beta/projects/your_gcp_pj_id/global/backendServices/ho-serverlessneg-ver-backend-service-app-2
+  - paths:
+    - /run-1
+    routeAction:
+      urlRewrite:
+        pathPrefixRewrite: /
+    service: https://www.googleapis.com/compute/beta/projects/your_gcp_pj_id/global/backendServices/ho-serverlessneg-ver-backend-service-run-1
+  - paths:
+    - /run-2
+    routeAction:
+      urlRewrite:
+        pathPrefixRewrite: /
+    service: https://www.googleapis.com/compute/beta/projects/your_gcp_pj_id/global/backendServices/ho-serverlessneg-ver-backend-service-run-2
+selfLink: https://www.googleapis.com/compute/beta/projects/your_gcp_pj_id/global/urlMaps/ho-serverlessneg-ver-url-map
+```
+
++ Validate the URL map.
+
+```
+gcloud beta compute url-maps validate --source ${_gcp_pj_id}.yaml --project ${_gcp_pj_id}
+```
+
++ Update the URL map.
+
+```
+gcloud beta compute url-maps import ${_common}-url-map \
+  --source ${_gcp_pj_id}.yaml \
+  --global \
+  --project ${_gcp_pj_id}
+```
+
 + Check URL map
 
 ```
@@ -421,12 +521,6 @@ gcloud beta compute url-maps list --project ${_gcp_pj_id}
 NAME                          DEFAULT_SERVICE
 ho-serverlessneg-ver-url-map  backendServices/ho-serverlessneg-ver-backend-service-run-1
 ```
-############ ここまで
-############ ここまで
-############ ここまで
-############ ここまで
-############ ここまで
-############ ここまで
 
 ### Create Certificate
 
@@ -509,6 +603,7 @@ ho-serverlessneg-ver-https-content-rule          34.120.199.24  TCP          ho-
 
 ---> Congratulations, You have created an External HTTP(S) Load Balancer using Serverless NEG!!
 
+
 ## Check Web blawser
 
 Check the resources with a Web browser.
@@ -574,27 +669,28 @@ gcloud beta compute url-maps delete ${_common}-url-map --project ${_gcp_pj_id}
 + Delete Backend Service
 
 ```
-gcloud beta compute backend-services delete ${_common}-backend-service-app  --global --project ${_gcp_pj_id}
-gcloud beta compute backend-services delete ${_common}-backend-service-func --global --project ${_gcp_pj_id}
-gcloud beta compute backend-services delete ${_common}-backend-service-run  --global --project ${_gcp_pj_id}
+gcloud beta compute backend-services delete ${_common}-backend-service-app-1  --global --project ${_gcp_pj_id}
+gcloud beta compute backend-services delete ${_common}-backend-service-app-2  --global --project ${_gcp_pj_id}
+gcloud beta compute backend-services delete ${_common}-backend-service-run-1  --global --project ${_gcp_pj_id}
+gcloud beta compute backend-services delete ${_common}-backend-service-run-2  --global --project ${_gcp_pj_id}
 ```
 
 + Delete Serverless NEG
 
 ```
-gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg-app  --region=${_region} --project ${_gcp_pj_id}
-gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg-func --region=${_region} --project ${_gcp_pj_id}
-gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg-run  --region=${_region} --project ${_gcp_pj_id}
+gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg-app-1  --region=${_region} --project ${_gcp_pj_id}
+gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg-app-2  --region=${_region} --project ${_gcp_pj_id}
+gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg-run-1  --region=${_region} --project ${_gcp_pj_id}
+gcloud beta compute network-endpoint-groups delete ${_common}-serverless-neg-run-2  --region=${_region} --project ${_gcp_pj_id}
 ```
 
 + Delete Serverless Service
 
 ```
-gcloud beta app services delete ${_common}-app --project ${_gcp_pj_id}
-gcloud beta functions delete func --region ${_region} --project ${_gcp_pj_id}
-gcloud beta run services delete ${_common}-run --platform managed --region ${_region} --project ${_gcp_pj_id}
+gcloud beta app services delete ${_common} --project ${_gcp_pj_id}
+gcloud beta run services delete ${_common} --platform managed --region ${_region} --project ${_gcp_pj_id}
 
-gcloud beta container images delete gcr.io/${_gcp_pj_id}/${_common}-run --project ${_gcp_pj_id}
+gcloud beta container images delete asia-docker.pkg.dev/${_gcp_pj_id}/handson-serverless-neg/${_common}:tag1
 ```
 
 + Delete External IP Address
