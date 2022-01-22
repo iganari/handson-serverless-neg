@@ -84,7 +84,7 @@ git clone https://github.com/iganari/handson-serverless-neg.git
 cd mulchi-serverless-version/
 ```
 
-## deploy App Engine
+## Deploy App Engine
 
 ```
 cd pyahon-sample
@@ -114,11 +114,15 @@ cat main.py.sample | sed 's/_YOUR_COMMENT/This is Version 2 of App Engine/g' > m
 gcloud beta app deploy app-service.yaml --version=version2 --project ${_gcp_pj_id}
 ```
 
-![](スクショ) x 3
+![](./_img/app-01.png)
 
+![](./_img/app-02.png)
 
-## ここから Run
+![](./_img/app-03.png)
 
+## Deploy Cloud Run
+
++ Prepare Artifact Registry
 
 ```
 gcloud beta artifacts repositories create handson-serverless-neg \
@@ -126,7 +130,6 @@ gcloud beta artifacts repositories create handson-serverless-neg \
   --repository-format docker \
   --project ${_gcp_pj_id}
 ```
-
 ```
 gcloud auth configure-docker asia-docker.pkg.dev --project ${_gcp_pj_id}
 ```
@@ -137,23 +140,14 @@ gcloud auth configure-docker asia-docker.pkg.dev --project ${_gcp_pj_id}
 cat main.py.sample | sed 's/_YOUR_COMMENT/This is Tag 1 of Cloud Run/g' > main.py
 ```
 
-
-+ docker
++ Push Container Image of Tag1
 
 ```
 docker build . --tag asia-docker.pkg.dev/${_gcp_pj_id}/handson-serverless-neg/${_common}:tag1
-docker push asia-docker.pkg.dev/${_gcp_pj_id}/handson-serverless-neg/${_common}:tag1
+docker push          asia-docker.pkg.dev/${_gcp_pj_id}/handson-serverless-neg/${_common}:tag1
 ```
 
-
-```
-docker build . --tag asia-docker.pkg.dev/${_gcp_pj_id}/handson-serverless-neg/${_common}:tag2
-docker push asia-docker.pkg.dev/${_gcp_pj_id}/handson-serverless-neg/${_common}:tag2
-```
-
-
-+ cloud Run deploy
-
++ Deploy Cloud Run of Tag1
 
 ```
 gcloud beta run deploy ${_common} \
@@ -172,6 +166,15 @@ gcloud beta run deploy ${_common} \
 cat main.py.sample | sed 's/_YOUR_COMMENT/This is Tag 2 of Cloud Run/g' > main.py
 ```
 
++ Push Container Image of Tag2
+
+```
+docker build . --tag asia-docker.pkg.dev/${_gcp_pj_id}/handson-serverless-neg/${_common}:tag2
+docker push          asia-docker.pkg.dev/${_gcp_pj_id}/handson-serverless-neg/${_common}:tag2
+```
+
++ Deploy Cloud Run of Tag2
+
 ```
 gcloud beta run deploy ${_common} \
   --image asia-docker.pkg.dev/${_gcp_pj_id}/handson-serverless-neg/${_common}:tag2 \
@@ -182,6 +185,14 @@ gcloud beta run deploy ${_common} \
   --tag=tag2 \
   --project ${_gcp_pj_id}
 ```
+
+![](./_img/run-1.png)
+
+![](./_img/run-2.png)
+
+![](./_img/run-3.png)
+
+![](./_img/run-4.png)
 
 ## Prepare External IP Address
 
@@ -216,7 +227,7 @@ gcloud beta compute addresses describe ${_common}-example-ip \
 
 + Set the reserved static IP address as an A record for your own subdomain.
 
-![](./_img/neg-serverless-01.png)
+![](./_img/dns.png)
 
 ## Create External HTTP(S) Load Balancer
 
@@ -241,7 +252,6 @@ gcloud beta compute network-endpoint-groups create ${_common}-serverless-neg-run
   --project ${_gcp_pj_id}
 ```
 
-
 + Create App Engine's Serverless NEG.
 
 ```
@@ -260,8 +270,6 @@ gcloud beta compute network-endpoint-groups create ${_common}-serverless-neg-app
   --app-engine-version=version2 \
   --project ${_gcp_pj_id}
 ```
-
-
 
 + Check NEG.
   + :warning: Right now, we can't see Serverless NEG in the console.
@@ -610,31 +618,29 @@ Check the resources with a Web browser.
 
 ### URL map on GCP console.
 
-![](./_img/neg-serverless-02.png)
+![](./_img/xxx)
 
 ### "/" maps to Cloud Run.
 
-![](./_img/neg-serverless-03.png)
+![](./_img/lb-1.png)
 
-### "/run" maps to Cloud Run.
+### "/app-1" maps to App Engine.
 
-![](./_img/neg-serverless-04.png)
+![](./_img/lb-2.png)
 
-### "/app" maps to App Engine.
+### "/app-2" maps to App Engine.
 
-![](./_img/neg-serverless-05.png)
+![](./_img/lb-3.png)
 
-### "/func" maps to Cloud Functions.
+### "/run-1" maps to Cloud Run.
 
-![](./_img/neg-serverless-06.png)
+![](./_img/lb-4.png)
 
-### If none of the above rules apply, it is mapped to Cloud Run.
+### "/run-2" maps to Cloud Run.
 
-![](./_img/neg-serverless-07.png)
+![](./_img/lb-5.png)
 
-### OverView
-
-![](./_img/neg-serverless-08.png)
+---> Congratulations, You have created an External HTTP(S) Load Balancer using Serverless NEG!! :)
 
 ## Delete Resource
 
@@ -699,6 +705,6 @@ gcloud beta container images delete asia-docker.pkg.dev/${_gcp_pj_id}/handson-se
 gcloud compute addresses delete ${_common}-example-ip --global --project ${_gcp_pj_id}
 ```
 
-## closing
+## Closing
 
 Have Fan :)
