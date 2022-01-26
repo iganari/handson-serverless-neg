@@ -1,51 +1,14 @@
-# WIP
+# Serverless NEG of multiple versions of a single service
 
-## 概要
+## Overvew
 
-run および app enngine は複数のバージョンを管理することが出来る
+Cloud Run and App Enngine can have multiple versions of a single service.
 
-よくある使いみちはバージョン管理など v1 , v2 みたいな
+In addition, multiple versions of a single LB can be installed independently.
 
-backend には Run および App Engine 
+This article is that hands-on.
 
-
-```
-NAME
-    gcloud beta compute network-endpoint-groups create - create a Google
-        Compute Engine network endpoint group
-
-SYNOPSIS
-    gcloud beta compute network-endpoint-groups create NAME
-        [--default-port=DEFAULT_PORT] [--network=NETWORK]
-        [--network-endpoint-type=NETWORK_ENDPOINT_TYPE;
-          default="gce-vm-ip-port"] [--psc-target-service=PSC_TARGET_SERVICE]
-        [--subnet=SUBNET]
-        [--cloud-function-name=CLOUD_FUNCTION_NAME
-          --cloud-function-url-mask=CLOUD_FUNCTION_URL_MASK
-          | --cloud-run-service=CLOUD_RUN_SERVICE
-          --cloud-run-tag=CLOUD_RUN_TAG --cloud-run-url-mask=CLOUD_RUN_URL_MASK
-          | --[no-]app-engine-app --app-engine-service=APP_ENGINE_SERVICE
-          --app-engine-url-mask=APP_ENGINE_URL_MASK
-          --app-engine-version=APP_ENGINE_VERSION
-```
-
-APp -> Version で指定出来そう
-cloud-run-service -> service
-
-## やってみる
-
-
-
-
-
-
-
-
-
-
-
-
-
+![](./_img/main.png)
 
 ## Prepare gcloud command
 
@@ -114,9 +77,15 @@ cat main.py.sample | sed 's/_YOUR_COMMENT/This is Version 2 of App Engine/g' > m
 gcloud beta app deploy app-service.yaml --version=version2 --project ${_gcp_pj_id}
 ```
 
++ App Engine
+
 ![](./_img/app-01.png)
 
++ Version 1 of App Engine
+
 ![](./_img/app-02.png)
+
++ Version 2 of App Engine
 
 ![](./_img/app-03.png)
 
@@ -140,14 +109,14 @@ gcloud auth configure-docker asia-docker.pkg.dev --project ${_gcp_pj_id}
 cat main.py.sample | sed 's/_YOUR_COMMENT/This is Tag 1 of Cloud Run/g' > main.py
 ```
 
-+ Push Container Image of Tag1
++ Push Container Image of Tag 1
 
 ```
 docker build . --tag asia-docker.pkg.dev/${_gcp_pj_id}/handson-serverless-neg/${_common}:tag1
 docker push          asia-docker.pkg.dev/${_gcp_pj_id}/handson-serverless-neg/${_common}:tag1
 ```
 
-+ Deploy Cloud Run of Tag1
++ Deploy Cloud Run of Tag 1
 
 ```
 gcloud beta run deploy ${_common} \
@@ -166,14 +135,14 @@ gcloud beta run deploy ${_common} \
 cat main.py.sample | sed 's/_YOUR_COMMENT/This is Tag 2 of Cloud Run/g' > main.py
 ```
 
-+ Push Container Image of Tag2
++ Push Container Image of Tag 2
 
 ```
 docker build . --tag asia-docker.pkg.dev/${_gcp_pj_id}/handson-serverless-neg/${_common}:tag2
 docker push          asia-docker.pkg.dev/${_gcp_pj_id}/handson-serverless-neg/${_common}:tag2
 ```
 
-+ Deploy Cloud Run of Tag2
++ Deploy Cloud Run of Tag 2
 
 ```
 gcloud beta run deploy ${_common} \
@@ -186,11 +155,19 @@ gcloud beta run deploy ${_common} \
   --project ${_gcp_pj_id}
 ```
 
++ Cloud Run
+
 ![](./_img/run-1.png)
+
++ Cloud Run Revisions
 
 ![](./_img/run-2.png)
 
++ Cloud Run of Tag 1
+
 ![](./_img/run-3.png)
+
++ Cloud Run of Tag 2
 
 ![](./_img/run-4.png)
 
@@ -405,14 +382,9 @@ gcloud beta compute url-maps add-path-matcher ${_common}-url-map \
   --project ${_gcp_pj_id}
 ```
 
-gcloud beta compute url-maps add-path-matcher --help
-
-おそらくここを修正する
-gcloud beta compute url-maps remove-path-matcher ${_common}-url-map --path-matcher-name=${_common}-path-matcher --project ${_gcp_pj_id} -q
-
 + Re Setting url-maps
-  + https://cloud.google.com/load-balancing/docs/https/traffic-management#rewrites
-  + https://cloud.google.com/load-balancing/docs/https/setting-up-url-rewrite#modifying_the_url_map
+  + [Traffic management overview for global external HTTP(S) load balancer (classic) | Rewrites](https://cloud.google.com/load-balancing/docs/https/traffic-management#rewrites)
+  + [Setting up URL rewrite for global external HTTP(S) load balancer (classic)s | Modifying the URL map](https://cloud.google.com/load-balancing/docs/https/setting-up-url-rewrite#modifying_the_url_map)
 
 
 ```
@@ -456,10 +428,9 @@ gcloud beta compute url-maps describe ${_common}-url-map --project ${_gcp_pj_id}
 vim ${_gcp_pj_id}.yaml
 ```
 
-+ Modify
-  + add `pathMatchers.pathRules.routeAction`
-  + remove `id`
-
++ Modify Setting
+  + Add `pathMatchers.pathRules.routeAction`
+  + Remove `id`
 
 ```
 creationTimestamp: '2022-01-21T02:52:25.351-08:00'
@@ -616,27 +587,27 @@ ho-serverlessneg-ver-https-content-rule          34.120.199.24  TCP          ho-
 
 Check the resources with a Web browser.
 
-### URL map on GCP console.
++ URL map on GCP console.
 
-![](./_img/xxx)
+WIP
 
-### "/" maps to Cloud Run.
++ "/" maps to Cloud Run.
 
 ![](./_img/lb-1.png)
 
-### "/app-1" maps to App Engine.
++ "/app-1" maps to App Engine.
 
 ![](./_img/lb-2.png)
 
-### "/app-2" maps to App Engine.
++ "/app-2" maps to App Engine.
 
 ![](./_img/lb-3.png)
 
-### "/run-1" maps to Cloud Run.
++ "/run-1" maps to Cloud Run.
 
 ![](./_img/lb-4.png)
 
-### "/run-2" maps to Cloud Run.
++ "/run-2" maps to Cloud Run.
 
 ![](./_img/lb-5.png)
 

@@ -2,23 +2,11 @@
 
 Network Endpoint Group = NEG
 
-
-## hoge
-
+## Serverless NEG of multiple service
 
 ![](./multi-serverless-application/_img/neg-serverless-00.png)
 
+## Serverless NEG of multiple versions of a single service
 
-
-
-## hoge
-
-
-
-
-
-
-
-
-
+![](./multi-serverless-version/_img/main.png)
 

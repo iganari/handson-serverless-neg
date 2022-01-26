@@ -1,6 +1,6 @@
-# Hands On Serverless Network Endpoint Group
+# Serverless NEG of multiple service
 
-Network Endpoint Group = NEG
+## Overvew
 
 ![](./_img/neg-serverless-00.png)
 
